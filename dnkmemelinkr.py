@@ -3,7 +3,7 @@ import obot
 import sqlite3
 
 SUBREDDIT = "test"
-MAXPOSTS = 100
+MAXPOSTS = 10
 
 BATTLEISJOINED = ["ALLAH", "RAPIER IS PRIMARY"]
 BATTLEISJOINED_RESPONSE = "https://www.youtube.com/watch?v=FcmWaz_UTBQ"
@@ -43,5 +43,5 @@ def replybot():
                 pass
             cur.execute('INSERT INTO oldposts VALUES(?)', [comment.id])
         sql.commit()
-
-replybot()
+while True:
+    replybot()
