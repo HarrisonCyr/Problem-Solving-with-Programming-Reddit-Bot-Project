@@ -4,6 +4,7 @@ import praw
 import obot
 # imports sqlite3 so we can use a database for storing comment ids so we don't reply to a comment more than once
 import sqlite3
+import re
 # subreddit the bot monitors. Add a + between subreddits to fetch comments from more than one
 SUBREDDIT = "test+eve+australia+funny"
 # number of the most recent comments the bot will get from the subreddit(s)
@@ -49,6 +50,7 @@ def replybot():
                             totalListOfWords = []
                             def moveWord (word):
                                 word = word.lower()
+                                word = re.sub('[^A-Za-z0-9-]+', '', word)
                                 if len(totalListOfWords) > 0:
                                     listLength = len(totalListOfWords)
                                     currentArray = 0
