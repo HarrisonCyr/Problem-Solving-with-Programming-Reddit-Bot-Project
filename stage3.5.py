@@ -70,9 +70,13 @@ def replybot():
                                     elif len(totalListOfWords) == 0:
                                         totalListOfWords.append([word,1])
                                 print("Replying to " + cauthor)
+                                meow = 0
                                 for pineapples in user.get_comments(limit=1000):
                                     if len(ultCommentString) < 9000:
-                                        ultCommentString += pineapples.body.lower() + " "
+                                        if len(cbody) < 900:
+                                            ultCommentString += pineapples.body.lower() + " "
+                                            meow += 1
+                                print("Used " + str(meow))
                                 listOfWords = ultCommentString.split()
                                 replyMsg = ""
                                 for word in listOfWords:
