@@ -24,7 +24,7 @@ print("Logging in to reddit")
 # logs into reddit with praw
 r = obot.login()
 
-botRespondsTo = ["tstAccountPleaseIgno","Ralph_Charante","Animatronic-Panda"]
+botRespondsTo = ["tstAccountPleaseIgno","GraphiteHippo","Animatronic-Panda"]
 
 def replybot():
     print('Fetching subrredt /r/' + SUBREDDIT)
@@ -40,17 +40,18 @@ def replybot():
             try:
                 # the comment's author is saved as cauthor
                 cauthor = comment.author.name
+                user = r.getredditor(cauthor)
                 # checks if the bot is replying to itself. If not then it procedes
                 if cauthor.lower() != 'DnkMemeLinkr'.lower():
-                    user = r.get_redditor(cauthor)
                     # the comment's body is saved as cbody
                     cbody = comment.body.lower()
-                    ultCommentString = ""
-                    for whale in botRespondsTo:
-                        if cauthor.lower() == whale.lower():
-                            if cbody == "analyzeMyComments".lower():
+                    allComments = ""
+                    if cbody.lower() == "analyzeMyComments".lower():
+                        for whale in botRespondsTo:
+                            if cauthor.lower() == whale.lower():
                                 listOfWords = []
                                 totalListOfWords = []
+                                # starting function definition
                                 def moveWord (word):
                                     word = word.lower()
                                     word = re.sub('[^A-Za-z0-9-]+', '', word)
@@ -69,16 +70,19 @@ def replybot():
                                             currentArray += 1
                                     elif len(totalListOfWords) == 0:
                                         totalListOfWords.append([word,1])
-                                print("Replying to " + cauthor)
-                                for pineapples in user.get_comments(limit=1000):
-                                    if len(ultCommentString) < 9000:
-                                        ultCommentString += pineapples.body.lower() + " "
-                                listOfWords = ultCommentString.split()
+                                # end of function definition
+                                allComments += cbody + " "
+                                print("Fetching past comments")
+                                for comment in user.get_comments(limit=NONE):
+                                    allComments += comment.body.lower()
+                                print("Done fecthing past comments")
+                                listOfWords = allComments.split()
                                 replyMsg = ""
                                 for word in listOfWords:
                                     moveWord(word)
                                 for array in totalListOfWords:
                                     replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
+                                print("Replying to " + cauthor)
                                 comment.reply(replyMsg)
             except AttributeError:
                 pass
