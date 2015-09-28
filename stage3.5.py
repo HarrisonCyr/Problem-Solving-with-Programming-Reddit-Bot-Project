@@ -6,7 +6,7 @@ import obot
 import sqlite3
 import re
 # subreddit the bot monitors. Add a + between subreddits to fetch comments from more than one
-SUBREDDIT = "test+eve+australia+funny"
+SUBREDDIT = "test"
 # number of the most recent comments the bot will get from the subreddit(s)
 MAXPOSTS = 100
 # Put trigger phrases & responses here
@@ -24,7 +24,7 @@ print("Logging in to reddit")
 # logs into reddit with praw
 r = obot.login()
 
-botRespondsTo = ["Ralph_Charante","GraphiteHippo"]
+botRespondsTo = ["tstAccountPleaseIgno","GraphiteHippo"]
 
 def replybot():
     print('Fetching subrredt /r/' + SUBREDDIT)
