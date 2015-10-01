@@ -72,17 +72,16 @@ def replybot():
                                 print("Replying to " + cauthor)
                                 meow = 0
                                 for pineapples in user.get_comments(limit=1000):
-                                    if len(ultCommentString) < 9000:
-                                        if len(cbody) < 900:
-                                            ultCommentString += pineapples.body.lower() + " "
-                                            meow += 1
-                                print("Used " + str(meow))
+                                    ultCommentString += pineapples.body.lower() + " "
                                 listOfWords = ultCommentString.split()
                                 replyMsg = ""
                                 for word in listOfWords:
                                     moveWord(word)
                                 for array in totalListOfWords:
-                                    replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
+                                    if (len(replyMsg) < 9000):
+                                        replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
+                                        meow += 1
+                                print("Used " + str(meow))
                                 comment.reply(replyMsg)
             except AttributeError:
                 pass
