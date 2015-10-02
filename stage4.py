@@ -7,6 +7,9 @@ import obot
 import sqlite3
 # regex necessary for the moveWord function. Without it we cannot filter out commas for the words.
 import re
+# Used for making graphs
+from pylab import *
+from optparse import OptionParser
 
 # Here we declare some variables that won't be changed while running the bot
 
@@ -36,6 +39,15 @@ r = obot.login()
 botRespondsTo = ["tstAccountPleaseIgno","Ralph_Charante","Animatronic-Panda"]
 totalListOfWords = []
 listOfWords = []
+
+# Graph Stuff
+# Make a square figure and axes
+figure(1, figsize=(8,4.5))
+ax = axes([0.1, 0.1, 0.8, 0.8])
+fracs = []
+labels = []
+explode = []
+
 # We use this function to organize words in a list to a much better looking list. example: ["cow","meow","pig","cow","pig"] turns into [["cow",2],["meow",1],["pig",2]]
 def moveWord (word):
     word = word.lower()
@@ -88,21 +100,32 @@ def replybot():
                                     allCommentsString += pastComment.body.lower() + " "
                                 listOfWords = allCommentsString.split()
                                 replyMsg = ""
-                                for word in listofWords:
+                                for word in listOfWords:
                                     moveWord(word)
                                 for array in totalListOfWords:
                                     if (len(replyMsg) < 9000):
                                         replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
                                         numberOfWordsUsed += 1
+                                for array in totalListOfWords:
+                                    explode.append(0)
+                                    fracs.append(array[1])
+                                    labels.append(array[0])
                                 print("Used " + str(numberOfWordsUsed))
                                 comment.reply(replyMsg)
+                                pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+                                title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
+                                show()
+                                # Clears the data the bot was using
                                 listOfWords.clear()
                                 totalListOfWords.clear()
+                                fracs.clear()
+                                labels.clear()
+                                explode.clear()
             except AttributeError:
                 pass
             # inserts the comment id into the database
             cur.execute("INSERT INTO oldposts VALUES(?)", [comment.id])
         # saves the database
         sql.commit()
-while True:
-    replybot()
+
+replybot()
