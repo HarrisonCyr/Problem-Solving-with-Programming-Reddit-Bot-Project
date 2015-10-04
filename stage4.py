@@ -67,6 +67,23 @@ def moveWord (word):
             currentArray += 1
     elif len(totalListOfWords) == 0:
         totalListOfWords.append([word,1])
+        
+def sortTotalListOfWords():
+    # The current list in the list we're looking at
+    fooCounter = 1
+    # The number of lists in the list
+    maxCounter = len(totalListOfWords)
+    # Just a place to quickly save the list we're looking at
+    memOne = []
+    # Just a place to quickly save the list before the list we're looking at
+    memTwo = []
+    while fooCounter < maxCounter:
+        if totalListOfWords[fooCounter][1] > totalListOfWords[fooCounter-1][1]:
+            memOne = totalListOfWords[fooCounter]
+            memTwo = totalListOfWords[fooCounter-1]
+            totalListOfWords[fooCounter - 1] = memOne
+            totalListOfWords[fooCounter] = memTwo
+        fooCounter += 1
 
 def replybot():
     print("Fetching subreddit /r/" + SUBREDDIT)
@@ -102,14 +119,23 @@ def replybot():
                                 replyMsg = ""
                                 for word in listOfWords:
                                     moveWord(word)
+                                # this part is for the orginization of the totalListOfWords list
+                                i = 0
+                                mi = len(totalListOfWords)
+                                while i < mi:
+                                    sortTotalListOfWords()
+                                    i += 1
                                 for array in totalListOfWords:
                                     if (len(replyMsg) < 9000):
                                         replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
                                         numberOfWordsUsed += 1
+                                wordsOnGraph = 0
                                 for array in totalListOfWords:
-                                    explode.append(0)
-                                    fracs.append(array[1])
-                                    labels.append(array[0])
+                                    if wordsOnGraph < 30:
+                                        explode.append(0)
+                                        fracs.append(array[1])
+                                        labels.append(array[0])
+                                        wordsOnGraph += 1
                                 print("Used " + str(numberOfWordsUsed))
                                 comment.reply(replyMsg)
                                 pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
