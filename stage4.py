@@ -10,6 +10,10 @@ import re
 # Used for making graphs
 from pylab import *
 from optparse import OptionParser
+# for uploading pictures/graphs to imgur
+import json, requests
+# We need the time module to give matplotlib time to generate and save the graph (may not be necessary on good pcs)
+import time
 
 # Here we declare some variables that won't be changed while running the bot
 
@@ -42,7 +46,7 @@ listOfWords = []
 
 # Graph Stuff
 # Make a square figure and axes
-figure(1, figsize=(8,4.5))
+figure(1, figsize=(16,9))
 ax = axes([0.1, 0.1, 0.8, 0.8])
 fracs = []
 labels = []
@@ -106,47 +110,55 @@ def replybot():
                     cbody = comment.body.lower()
                     # This string is used for storing all the user's comments content
                     allCommentsString = ""
-                    # We use this for in loop to check if the comment author is in the botRespondsTo list
-                    for approvedCommentor in botRespondsTo:
-                        if cauthor.lower() == approvedCommentor.lower():
-                            if cbody == "analyzeMyComments".lower():
-                                print ("Replying to " + cauthor)
-                                # numberOfWordsUsed
-                                numberOfWordsUsed = 0
-                                for pastComment in user.get_comments(limit=1000):
-                                    allCommentsString += pastComment.body.lower() + " "
-                                listOfWords = allCommentsString.split()
-                                replyMsg = ""
-                                for word in listOfWords:
-                                    moveWord(word)
-                                # this part is for the orginization of the totalListOfWords list
-                                i = 0
-                                mi = len(totalListOfWords)
-                                while i < mi:
-                                    sortTotalListOfWords()
-                                    i += 1
-                                for array in totalListOfWords:
-                                    if (len(replyMsg) < 9000):
-                                        replyMsg += array[0] + " was said: " + str(array[1]) + " times. \n\n"
-                                        numberOfWordsUsed += 1
-                                wordsOnGraph = 0
-                                for array in totalListOfWords:
-                                    if wordsOnGraph < 30:
-                                        explode.append(0)
-                                        fracs.append(array[1])
-                                        labels.append(array[0])
-                                        wordsOnGraph += 1
-                                print("Used " + str(numberOfWordsUsed))
-                                comment.reply(replyMsg)
-                                pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-                                title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
-                                show()
-                                # Clears the data the bot was using
-                                listOfWords.clear()
-                                totalListOfWords.clear()
-                                fracs.clear()
-                                labels.clear()
-                                explode.clear()
+                    # We use this for in loop to check if the comment author is in the botRespondsTo list. If you want to enable it then shift everything until the exception by two tabs
+                    #for approvedCommentor in botRespondsTo:
+                        #if cauthor.lower() == approvedCommentor.lower():
+                    if cbody == "analyzeMyComments".lower():
+                        for pastComment in user.get_comments(limit=1000):
+                            allCommentsString += pastComment.body.lower() + " "
+                        listOfWords = allCommentsString.split()
+                        replyMsg = "------------------------- \n\n Bleep Bloop, I am a WIP bot. \n\n Please don't be mad at me \n\n -------------------------- \n\n"
+                        for word in listOfWords:
+                            moveWord(word)
+                        # this part is for the orginization of the totalListOfWords list
+                        i = 0
+                        mi = len(totalListOfWords)
+                        while i < mi:
+                            sortTotalListOfWords()
+                            i += 1
+                        # Adds words and their values from the list to the graph
+                        wordsOnGraph = 0
+                        for array in totalListOfWords:
+                            # The condition after the and eliminates the issue with there being an empty string in the graph
+                            if wordsOnGraph < 15 and array[0] != "":
+                                explode.append(0.1)
+                                fracs.append(array[1])
+                                labels.append(array[0])
+                                wordsOnGraph += 1
+                        # Creates the graph here
+                        pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+                        title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
+                        # saves the graph as 1.png
+                        savefig('1.png', bbox_inches='tight')
+                        # Gives matplotlib 40 seconds to generate and save the graph
+                        print("Giving matplotlib 40 seconds to save the graph...")
+                        time.sleep(40)
+                        # Uploads the graph to imgur
+                        uploadImage = requests.post(
+                        'https://api.imgur.com/3/image',
+                        data = { 'image': open('1.png', 'rb').read(), 'type': 'file' },
+                                headers = {'Authorization': 'Client-ID 6f3fff0ebb12efd'}
+                                )
+                        # Adds the image link to the comment reply string
+                        replyMsg += uploadImage.json()['data']['link']
+                        print ("Replying to " + cauthor)
+                        comment.reply(replyMsg)
+                        # Clears the data the bot was using
+                        listOfWords.clear()
+                        totalListOfWords.clear()
+                        fracs.clear()
+                        labels.clear()
+                        explode.clear()
             except AttributeError:
                 pass
             # inserts the comment id into the database
