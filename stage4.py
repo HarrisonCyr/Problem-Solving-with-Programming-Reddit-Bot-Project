@@ -14,6 +14,8 @@ from optparse import OptionParser
 import json, requests
 # We need the time module to give matplotlib time to generate and save the graph (may not be necessary on good pcs)
 import time
+# We need this to upload images to imgur
+import ibot
 
 # Here we declare some variables that won't be changed while running the bot
 
@@ -147,7 +149,7 @@ def replybot():
                         uploadImage = requests.post(
                         'https://api.imgur.com/3/image',
                         data = { 'image': open('1.png', 'rb').read(), 'type': 'file' },
-                                headers = {'Authorization': 'Client-ID 6f3fff0ebb12efd'}
+                                headers = {'Authorization': 'Client-ID ' + ibot.api_key}
                                 )
                         # Adds the image link to the comment reply string
                         replyMsg += uploadImage.json()['data']['link']
