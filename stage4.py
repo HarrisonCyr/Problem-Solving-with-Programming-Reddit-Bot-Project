@@ -8,7 +8,7 @@ import sqlite3
 # regex necessary for the moveWord function. Without it we cannot filter out commas for the words.
 import re
 # Used for making graphs
-from pylab import *
+import matplotlib.pyplot as plt
 from optparse import OptionParser
 # for uploading pictures/graphs to imgur
 import json, requests
@@ -42,7 +42,6 @@ print("Logging in to reddit...")
 r = obot.login()
 
 # List of people who the bot will respond to
-botRespondsTo = ["tstAccountPleaseIgno","Ralph_Charante","Animatronic-Panda"]
 totalListOfWords = []
 listOfWords = []
 
@@ -112,9 +111,6 @@ def replybot():
                     cbody = comment.body.lower()
                     # This string is used for storing all the user's comments content
                     allCommentsString = ""
-                    # We use this for in loop to check if the comment author is in the botRespondsTo list. If you want to enable it then shift everything until the exception by two tabs
-                    #for approvedCommentor in botRespondsTo:
-                        #if cauthor.lower() == approvedCommentor.lower():
                     if cbody == "analyzeMyComments".lower():
                         for pastComment in user.get_comments(limit=1000):
                             allCommentsString += pastComment.body.lower() + " "
@@ -138,10 +134,10 @@ def replybot():
                                 labels.append(array[0])
                                 wordsOnGraph += 1
                         # Creates the graph here
-                        pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-                        title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
+                        plt.pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+                        plt.title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
                         # saves the graph as 1.png
-                        savefig('1.png', bbox_inches='tight')
+                        plt.savefig('1.png', bbox_inches='tight')
                         # Gives matplotlib 40 seconds to generate and save the graph
                         print("Giving matplotlib 40 seconds to save the graph...")
                         time.sleep(40)
