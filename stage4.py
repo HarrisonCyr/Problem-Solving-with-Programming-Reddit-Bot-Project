@@ -47,8 +47,9 @@ listOfWords = []
 
 # Graph Stuff
 # Make a square figure and axes
-figure(1, figsize=(16,9))
-ax = axes([0.1, 0.1, 0.8, 0.8])
+plt.figure(1, figsize=(16,9))
+ax = plt.axes([0.1, 0.1, 0.8, 0.8])
+colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue']
 fracs = []
 labels = []
 explode = []
@@ -134,7 +135,8 @@ def replybot():
                                 labels.append(array[0])
                                 wordsOnGraph += 1
                         # Creates the graph here
-                        plt.pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+                        # autopct='%1.1f%%', somewhere to get percentages
+                        plt.pie(fracs, explode=explode, labels=labels, autopct='%.2f', shadow=False, colors=colors)
                         plt.title(cauthor + "\'s comment history", bbox={'facecolor':'0.8', 'pad':5})
                         # saves the graph as 1.png
                         plt.savefig('1.png', bbox_inches='tight')
